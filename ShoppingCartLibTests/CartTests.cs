@@ -100,5 +100,19 @@ namespace ShoppingCartLibTests
             Assert.Equal(0.04m, cart.Tax);
             Assert.Equal(0.74m, cart.Total);
         }
+
+        [Fact]
+        public void ShoppingCartWhenProductPriceChangesLatestPriceIsUsed()
+        {
+            var cart = new ShoppingCart();
+
+            var DOLLAR_STORE_ITEM = new Product("Generic item", 1.00m);
+            cart.Add(DOLLAR_STORE_ITEM);
+
+            var DOLLAR_STORE_INFLATION_ITEM = new Product("Generic item", 1.25m);
+            cart.Add(DOLLAR_STORE_INFLATION_ITEM);
+
+            Assert.Equal(2.50m, cart.Total);
+        }
     }
 }
