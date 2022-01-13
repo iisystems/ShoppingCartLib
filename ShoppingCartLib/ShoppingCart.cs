@@ -28,12 +28,21 @@ namespace ShoppingCartLib
         {
             lock (_object)
             {
-                if (_lineItems.TryGetValue(product.Name, out LineItem lineItem))
+                LineItem lineItem;
+                if (_lineItems.TryGetValue(product.Name, out lineItem))
+                {
+                    // If item already in cart, update quantity and reset to current price
+                    SubTotal -= lineItem.LineTotal;
+                    lineItem.UnitPrice = product.Price;
                     lineItem.Quantity += quantity;
+                }
                 else
-                    _lineItems.Add(product.Name, new LineItem(product.Name, product.Price, quantity));
+                {
+                    lineItem = new LineItem(product.Name, product.Price, quantity);
+                    _lineItems.Add(product.Name, lineItem);
+                }
 
-                SubTotal += Math.Round(product.Price * quantity, 2, MidpointRounding.AwayFromZero);
+                SubTotal += lineItem.LineTotal;
             }
         }
 
