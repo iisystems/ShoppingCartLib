@@ -8,7 +8,7 @@ namespace ShoppingCartLibTests
     public class ProductTests
     {
         [Theory]
-        [InlineData ("product", 1.00, "product", 1.00, true)]
+        [InlineData("product", 1.00, "product", 1.00, true)]
         [InlineData("product", 1.00, "product", 2.01, true)]
         [InlineData("product", 1.00, "Product", 1.00, false)]
         [InlineData("product", 1.00, "Product", 2.00, false)]
