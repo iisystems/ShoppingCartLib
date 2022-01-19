@@ -4,15 +4,15 @@ namespace ShoppingCartLib
 {
     public class LineItem
     {
-        public string ProductName;
-        public decimal UnitPrice;
-        public ushort Quantity;
-        public decimal LineTotal { get => Math.Round(UnitPrice * Quantity, 2, MidpointRounding.AwayFromZero); }
+        public Product Product;
+        public string ProductName => Product.Name;
+        public decimal UnitPrice => Product.Price;
+        public short Quantity;
+        public decimal LineTotal => (UnitPrice * Quantity).RoundToTwoDigits();
 
-        public LineItem(string productName, decimal unitPrice, ushort quantity)
+        public LineItem(Product product, short quantity)
         {
-            ProductName = productName;
-            UnitPrice = unitPrice;
+            Product = product;
             Quantity = quantity;
         }
     }

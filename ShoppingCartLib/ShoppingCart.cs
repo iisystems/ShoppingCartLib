@@ -7,9 +7,9 @@ namespace ShoppingCartLib
     public class ShoppingCart
     {
         public decimal SubTotal;
-        public decimal Tax { get => Math.Round(SubTotal * _taxRate, 2, MidpointRounding.AwayFromZero); }
-        public decimal Total { get => SubTotal + Tax; }
-        public int LineItemCount { get => _lineItems.Count; }
+        public decimal Tax => (SubTotal * _taxRate).RoundToTwoDigits();
+        public decimal Total => SubTotal + Tax;
+        public int LineItemCount => _lineItems.Count;
 
         private Dictionary<string, LineItem> _lineItems = new();
         private decimal _taxRate;
@@ -24,31 +24,27 @@ namespace ShoppingCartLib
             _taxRate = taxRate;
         }
 
-        public void Add(Product product, ushort quantity)
+        public void Add(Product product, short quantity = 1)
         {
             lock (_object)
             {
                 LineItem lineItem;
+
+                // If product already in cart, update quantity and set to current price
                 if (_lineItems.TryGetValue(product.Name, out lineItem))
                 {
-                    // If item already in cart, update quantity and reset to current price
                     SubTotal -= lineItem.LineTotal;
-                    lineItem.UnitPrice = product.Price;
+                    lineItem.Product = product;
                     lineItem.Quantity += quantity;
                 }
                 else
                 {
-                    lineItem = new LineItem(product.Name, product.Price, quantity);
+                    lineItem = new LineItem(product, quantity);
                     _lineItems.Add(product.Name, lineItem);
                 }
 
                 SubTotal += lineItem.LineTotal;
             }
-        }
-
-        public void Add(Product product)
-        {
-            Add(product, 1);
         }
 
         public LineItem this[string itemName]
