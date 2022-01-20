@@ -34,5 +34,27 @@ namespace ShoppingCartLibTests
                 Assert.True(product1 != product2);
             }
         }
+
+        [Fact]
+        public void ProductAddDefaultStrategyIsFullPrice()
+        {
+            const short quantity = 5;
+            var product = new Product("product", 1.00m);
+            var calculatedPrice = product.CalculateBulkPrice(quantity);
+            var fullPrice = product.Price * quantity;
+        
+            Assert.Equal(fullPrice, calculatedPrice);
+        }
+
+        [Fact]
+        public void ProductAddWhenBuyTwoGetOneFree()
+        {
+            const short quantity = 5;
+            var product = new Product("product", 1.00m, Product.PricingStrategy_Buy2Get1Free);
+            var calculatedPrice = product.CalculateBulkPrice(quantity);
+            var discountedPrice = product.Price * (quantity - 1);
+
+            Assert.Equal(discountedPrice, calculatedPrice);
+        }
     }
 }
