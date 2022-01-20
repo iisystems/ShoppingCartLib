@@ -18,5 +18,19 @@ namespace ShoppingCartLibTests
 
             Assert.Equal(expectedTotal, lineItem.LineTotal);
         }
+
+        [Theory]
+        [InlineData(1.00, 2, 2.00)]
+        [InlineData(2.00, 3, 4.00)]
+        [InlineData(3.00, 6, 12.00)]
+        [InlineData(4.00, 8, 24.00)]
+        [InlineData(10.00, 100, 670.00)]
+        public void LineItemLineTotalWhenBuy2Get1FreeEveryThirdItemIsFree(decimal price, short quantity, decimal expectedCost)
+        {
+            var product = new Product("product", price, Product.PricingStrategy_Buy2Get1Free);
+            var lineItem = new LineItem(product, quantity);
+
+            Assert.Equal(expectedCost, lineItem.LineTotal);
+        }
     }
 }

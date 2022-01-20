@@ -114,5 +114,67 @@ namespace ShoppingCartLibTests
 
             Assert.Equal(2.50m, cart.Total);
         }
+
+        [Theory]
+        [InlineData(5, 4, 1)]
+        [InlineData(10, 5, 5)]
+        [InlineData(100, 1, 99)]
+        public void ShoppingCartRemoveWhenSomeLeftQuantityIsReduced(short add, short remove, short expectedRemaining)
+        {
+            var cart = new ShoppingCart();
+            var product = new Product("product", 1.00m);
+            
+            cart.Add(product, add);
+            cart.Remove(product, remove);
+
+            Assert.Equal(expectedRemaining, cart[product].Quantity);
+        }
+
+        [Theory]
+        [InlineData(5, 5)]
+        [InlineData(10, 12)]
+        public void ShoppingCartRemoveWhenNoneLeftLineItemIsRemoved(short add, short remove)
+        {
+            var cart = new ShoppingCart();
+            var product = new Product("product", 1.00m);
+
+            cart.Add(product, add);
+            cart.Remove(product, remove);
+
+            Assert.Equal(0, cart.LineItemDiscount);
+        }
+
+        [Fact]
+        public void ShoppingCartLineItemDiscountsTotalFromAllLineItems()
+        {
+            var product1 = new Product("product1", 1.00m, Product.PricingStrategy_Buy2Get1Free);
+            var product2 = new Product("product2", 2.00m, Product.PricingStrategy_Buy2Get1Free);
+            var cart = new ShoppingCart();
+
+            cart.Add(product1, 3);
+            cart.Add(product2, 6);
+            const decimal expectedDiscount = 5.00m;
+
+            Assert.Equal(expectedDiscount, cart.LineItemDiscount);
+        }
+
+        [Fact]
+        public void ShoppingCartWhenOver1000Apply10PercentDiscount()
+        {
+            var saladDressing = new Product("Thousand Island Dressing", 1000);
+            var cart = new ShoppingCart();
+            cart.Add(saladDressing);
+            Assert.Equal(0m, cart.CartDiscount);
+            Assert.Equal(0m, cart.TotalDiscount);
+
+            cart.Add(EGGS);     // 1002.99
+            Assert.Equal(100.30m, cart.CartDiscount);
+            Assert.Equal(100.30m, cart.TotalDiscount);
+
+            var taxedCart = new ShoppingCart(0.01m);    //1010.00
+            taxedCart.Add(saladDressing);
+            Assert.Equal(101.00m, taxedCart.CartDiscount);
+            Assert.Equal(101.00m, taxedCart.TotalDiscount);
+        }
     }
 }
