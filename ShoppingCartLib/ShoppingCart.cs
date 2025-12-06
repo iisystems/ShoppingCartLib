@@ -63,9 +63,11 @@ namespace ShoppingCartLib
                 LineItemDiscount += (lineItem.Discount * (1 + _taxRate)).RoundToTwoDigits();
             }
         }
+        
         public void Remove(Product product, short quantity = 1)
         {
             Add(product, (short)(0 - quantity));
         }
     }
 }
+
